@@ -59,5 +59,5 @@ if __name__ == "__main__":
         data = []
         for line in file.read().split():
             data.append(list(line))
-        # print(part_one(data))
+        print(part_one(data))
         print(part_two(data))
