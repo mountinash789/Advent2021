@@ -1,10 +1,12 @@
 class BingoCard(object):
+    id = None
     raw_data = None
     rows = []
     columns = []
     drawn = []
 
-    def __init__(self, data):
+    def __init__(self, data, id):
+        self.id = id
         self.raw_data = data
         self.rows = []
         self.columns = []
@@ -15,6 +17,9 @@ class BingoCard(object):
                 if len(self.columns) <= e:
                     self.columns.append([])
                 self.columns[e].append(value)
+
+    def __str__(self):
+        return f'Card {self.id}'
 
     def draw(self, value):
         self.drawn.append(value)
@@ -41,7 +46,6 @@ class BingoCard(object):
         for row in self.rows:
             for c in row:
                 remaining.append(int(c))
-
         return sum(remaining) * int(self.drawn[-1])
 
 
@@ -53,8 +57,24 @@ def part_one(draw, cards):
                 return card.score()
 
 
-def part_two():
-    pass
+def part_two(draw, cards):
+    """
+    Answer is 31892 try to reverse engineer it.
+    """
+    winners = []
+    while len(cards) > 0:
+        for value in draw:
+            if len(cards) == 0:
+                break
+            winnder_idx = None
+            for index, card in enumerate(cards):
+                card.draw(value)
+                if card.has_won():
+                    winnder_idx = index
+                    winners.append(card.score())
+            if winnder_idx is not None:
+                cards.pop(winnder_idx)
+    return winners[-1]
 
 
 if __name__ == "__main__":
@@ -78,8 +98,9 @@ if __name__ == "__main__":
         cards.append(card)
 
         card_objs = []
-        for card in cards:
-            b = BingoCard(card)
+        for i, card in enumerate(cards, start=1):
+            b = BingoCard(card, i)
             card_objs.append(b)
 
         print(part_one(draw, card_objs))
+        print(part_two(draw, card_objs))
